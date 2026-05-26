@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LENAXIS - Gestion de Projet Cession - Outil de pilotage interne">
+<meta name="robots" content="noindex, nofollow">
+<title>LENAXIS — Gestion de Projet Cession</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230B1E3F'/%3E%3Ctext x='50' y='65' font-family='Arial' font-size='50' font-weight='bold' fill='%2300B9D6' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #f5f7fa;
+    color: #1a1a1a;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    background: linear-gradient(135deg, #0B1E3F 0%, #1a3a6e 100%);
+    color: white;
+    padding: 20px 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  header .header-content { max-width: 1400px; margin: 0 auto; }
+  header h1 { font-size: 28px; font-weight: 700; letter-spacing: 1px; }
+  header .sub { color: #00B9D6; font-style: italic; font-size: 14px; margin-top: 4px; }
+  header .meta { font-size: 13px; margin-top: 8px; opacity: 0.85; }
+  header .info-stockage { font-size: 11px; color: #b8c5d6; margin-top: 6px; font-style: italic; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+  .toolbar {
+    background: white;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .toolbar select, .toolbar input, .toolbar button {
+    padding: 8px 14px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+  }
+  .toolbar button { cursor: pointer; }
+  .toolbar button.primary {
+    background: #00B9D6;
+    color: white;
+    border-color: #00B9D6;
+    font-weight: 600;
+  }
+  .toolbar button.primary:hover { background: #0098b3; }
+  .toolbar button.danger { color: #d73a49; border-color: #d73a49; }
+  .toolbar button.export { background: #0B1E3F; color: white; border-color: #0B1E3F; }
+  .toolbar button.share { background: #6f42c1; color: white; border-color: #6f42c1; }
+  .toolbar #recherche { flex: 1; min-width: 200px; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .kpi {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid #00B9D6;
+  }
+  .kpi .label { font-size: 11px; color: #6a737d; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .kpi .value { font-size: 28px; font-weight: 700; color: #0B1E3F; margin-top: 5px; }
+  .kpi .extra { font-size: 11px; color: #6a737d; margin-top: 3px; }
+  .kpi.warning { border-left-color: #f0a500; }
+  .kpi.warning .value { color: #f0a500; }
+  .kpi.danger { border-left-color: #d73a49; }
+  .kpi.danger .value { color: #d73a49; }
+  .kpi.success { border-left-color: #28a745; }
+  .kpi.success .value { color: #28a745; }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 900px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .toolbar { padding: 12px; }
+    .toolbar select, .toolbar input, .toolbar button { font-size: 13px; padding: 7px 10px; }
+    header { padding: 15px 20px; }
+    header h1 { font-size: 22px; }
+    .container { padding: 12px; }
+    .task { grid-template-columns: 1fr !important; gap: 8px !important; }
+    .task .actions { justify-content: flex-end; display: flex; }
+  }
+  .chart-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .chart-card h3 { color: #0B1E3F; font-size: 16px; margin-bottom: 15px; }
+  .chart-card canvas { max-height: 250px; }
+
+  .tasks-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+  }
+  .tasks-section h2 {
+    color: #0B1E3F;
+    font-size: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #00B9D6;
+  }
+  .task {
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 80px 1fr auto auto auto auto;
+    gap: 15px;
+    align-items: center;
+    transition: all 0.2s;
+    background: #fafbfc;
+  }
+  .task:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: white; }
+  .task.statut-Termine { opacity: 0.6; background: #f0f9f4; }
+  .task.statut-Bloque { background: #fff4f4; border-color: #d73a49; }
+  .task.en-retard { border-left: 4px solid #d73a49; }
+
+  .task .ref-block { display: flex; flex-direction: column; gap: 4px; }
+  .task .ref { font-weight: 700; color: #0B1E3F; font-size: 14px; }
+  .task .titre { font-weight: 600; color: #1a1a1a; }
+  .task .description { font-size: 13px; color: #586069; margin-top: 4px; }
+  .task .meta-info { font-size: 12px; color: #6a737d; margin-top: 5px; }
+  .task .meta-info em { font-style: normal; background: #fffbea; padding: 2px 8px; border-radius: 4px; }
+  .task .echeance { font-size: 13px; color: #586069; font-weight: 500; white-space: nowrap; }
+  .task .echeance.urgent { color: #d73a49; font-weight: 700; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .badge-statut-A-faire { background: #e1e4e8; color: #24292e; }
+  .badge-statut-En-cours { background: #cce5ff; color: #004085; }
+  .badge-statut-Bloque { background: #f8d7da; color: #721c24; }
+  .badge-statut-Termine { background: #d4edda; color: #155724; }
+  .badge-priorite-Haute { background: #f8d7da; color: #721c24; }
+  .badge-priorite-Moyenne { background: #fff3cd; color: #856404; }
+  .badge-priorite-Standard { background: #d1ecf1; color: #0c5460; }
+  .badge-personne-David { background: #0B1E3F; color: white; }
+  .badge-personne-Romain { background: #00B9D6; color: white; }
+  .badge-personne-Guillaume { background: #6f42c1; color: white; }
+  .badge-personne-Tous { background: #6c757d; color: white; }
+
+  .actions { display: flex; gap: 4px; flex-wrap: nowrap; }
+  .actions button {
+    background: none;
+    border: 1px solid #d0d7de;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .actions button:hover { background: #f6f8fa; }
+  .actions button.complete { color: #28a745; border-color: #28a745; }
+  .actions button.delete { color: #d73a49; border-color: #d73a49; }
+  .actions button.edit { color: #0366d6; border-color: #0366d6; }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  }
+  .modal h2 { color: #0B1E3F; margin-bottom: 18px; font-size: 22px; }
+  .modal label { display: block; font-size: 13px; font-weight: 600; color: #586069; margin-top: 12px; margin-bottom: 5px; }
+  .modal input, .modal select, .modal textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .modal textarea { min-height: 80px; resize: vertical; }
+  .modal-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+  .modal-buttons button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .modal-buttons .save { background: #00B9D6; color: white; border-color: #00B9D6; }
+  .modal-buttons .cancel { background: white; }
+
+  .notification-banner {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid #f0a500;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .notification-banner.active { display: block; }
+  .notification-banner strong { color: #856404; }
+
+  .info-banner {
+    background: linear-gradient(135deg, #e6f8fb 0%, #c5ecf5 100%);
+    border-left: 4px solid #00B9D6;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #0B1E3F;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 2000;
+    max-width: 350px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #6a737d;
+    font-style: italic;
+  }
+
+  footer {
+    text-align: center;
+    color: #6a737d;
+    font-size: 12px;
+    padding: 30px 20px;
+    line-height: 1.8;
+  }
+  footer .url { background: #fff; padding: 4px 10px; border-radius: 5px; font-family: monospace; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <h1>LENAXIS — Gestion de Projet Cession</h1>
+    <div class="sub">Secure Your Risk. Secure Every Future.</div>
+    <div class="meta">David Museur · Romain Leclercq · Guillaume — Échéance finale : vendredi 12 juin 2026</div>
+    <div class="info-stockage">⚠️ Stockage local au navigateur. Pour partager l'état avec un collègue, utilise « Exporter JSON » puis « Importer JSON ».</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div id="notification-banner" class="notification-banner">
+    <strong>Rappel quotidien :</strong> <span id="notification-text"></span>
+  </div>
+
+  <div class="info-banner">
+    💡 Cette page est une URL stable que tu peux partager à Romain, Guillaume et Maître Caprioli. Chacun verra l'état initial du compte rendu de réunion. Pour synchroniser les avancements, utilisez le bouton « Exporter JSON » pour échanger les mises à jour par mail.
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Avancement par responsable</h3>
+      <canvas id="chart-personne"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Répartition par statut</h3>
+      <canvas id="chart-statut"></canvas>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="primary" onclick="ouvrirModal()">+ Nouvelle tâche</button>
+    <select id="filtre-personne" onchange="rendre()">
+      <option value="">Tous responsables</option>
+      <option value="David">David</option>
+      <option value="Romain">Romain</option>
+      <option value="Guillaume">Guillaume</option>
+      <option value="Tous">Réunions à 3</option>
+    </select>
+    <select id="filtre-statut" onchange="rendre()">
+      <option value="">Tous statuts</option>
+      <option value="A-faire">À faire</option>
+      <option value="En-cours">En cours</option>
+      <option value="Bloque">Bloqué</option>
+      <option value="Termine">Terminé</option>
+    </select>
+    <select id="tri" onchange="rendre()">
+      <option value="echeance">Tri échéance</option>
+      <option value="priorite">Tri priorité</option>
+      <option value="personne">Tri responsable</option>
+      <option value="statut">Tri statut</option>
+    </select>
+    <input type="text" id="recherche" placeholder="🔍 Rechercher..." oninput="rendre()">
+    <button class="share" onclick="copierURL()">🔗 Copier URL</button>
+    <button class="export" onclick="exporter()">📥 Export</button>
+    <button onclick="document.getElementById('import-file').click()">📤 Import</button>
+    <input type="file" id="import-file" style="display:none" accept=".json" onchange="importer(event)">
+    <button class="danger" onclick="reinitialiser()">🔄 Reset</button>
+  </div>
+
+  <div class="tasks-section">
+    <h2>Liste des tâches</h2>
+    <div id="liste-taches"></div>
+  </div>
+
+</div>
+
+<div id="modal" class="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-titre">Nouvelle tâche</h2>
+    <input type="hidden" id="form-id">
+    <label>Référence (ex: D1, R3, G2, M1)</label>
+    <input type="text" id="form-ref" placeholder="D1">
+    <label>Titre court</label>
+    <input type="text" id="form-titre" placeholder="Mail Lucien Meney...">
+    <label>Description détaillée</label>
+    <textarea id="form-description"></textarea>
+    <label>Responsable</label>
+    <select id="form-personne">
+      <option value="David">David</option>
+      <option value="Romain">Romain</option>
+      <option value="Guillaume">Guillaume</option>
+      <option value="Tous">Réunion à 3</option>
+    </select>
+    <label>Statut</label>
+    <select id="form-statut">
+      <option value="A-faire">À faire</option>
+      <option value="En-cours">En cours</option>
+      <option value="Bloque">Bloqué</option>
+      <option value="Termine">Terminé</option>
+    </select>
+    <label>Priorité</label>
+    <select id="form-priorite">
+      <option value="Haute">Haute</option>
+      <option value="Moyenne">Moyenne</option>
+      <option value="Standard">Standard</option>
+    </select>
+    <label>Date d'échéance</label>
+    <input type="date" id="form-echeance">
+    <label>Note de progression / commentaire</label>
+    <textarea id="form-note" placeholder="Avancement, points de vigilance..."></textarea>
+    <div class="modal-buttons">
+      <button class="cancel" onclick="fermerModal()">Annuler</button>
+      <button class="save" onclick="sauvegarder()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Action effectuée</div>
+
+<footer>
+  LENAXIS — Gestion de Projet Cession<br>
+  Sauvegarde locale au navigateur · Données conservées entre sessions · Aucune donnée envoyée à un serveur<br>
+  Pour synchroniser entre plusieurs personnes : Exporter le JSON et l'envoyer par mail, l'autre Importe le JSON reçu
+</footer>
+
+<script>
+const TACHES_INITIALES = [
+  { id: 1, ref: "D1", titre: "Mise à jour des 24 documents Data Room + capsules clés", description: "Reprendre les 22 pièces de l'index maître + 2 nouvelles catégories (vidéo, communication). Créer une capsule courte point clé par thème à la demande de Lucien Meney (capsule environnement concurrentiel, capsule marché, capsule technique, etc.).", personne: "David", statut: "En-cours", priorite: "Haute", echeance: "2026-06-12", note: "Vague 1 lancée le 02/06. Capsules à produire après finalisation Data Room textuelle." },
+  { id: 2, ref: "D2", titre: "Transmettre documents clés à Guillaume", description: "Identifier dans la Dropbox les documents stratégiques et les partager à Guillaume pour qu'il puisse engager son travail de validation technique et de coaching pitch. Périmètre proposé : V4 benchmark prix, pièce 05B ontologie unifiée des risques, matrice consolidation Data Room, fiche technique consolidée.", personne: "David", statut: "A-faire", priorite: "Haute", echeance: "2026-05-30", note: "" },
+  { id: 3, ref: "D3", titre: "Proposer mode de fonctionnement avec Maître Caprioli", description: "Formaliser une proposition de rythme de validation avec Caprioli sur cession, NDA renforcé, transferts historiques (Eurosud 2020 + Finaxy 2024), organisation de la diligence acquéreur. Définir cadence de point juridique.", personne: "David", statut: "A-faire", priorite: "Haute", echeance: "2026-06-03", note: "" },
+  { id: 4, ref: "D4", titre: "Réaliser 4 scénarios détaillés pour vidéo cas concrets", description: "4 cas concrets d'utilisation LENAXIS et avantages pour acquéreurs. Profils proposés : (1) cabinet conseil et audit type Grant Thornton, (2) compagnie d'assurance ou réassureur, (3) industriel ETI multi-sites, (4) courtier d'assurance ou broker. Chaque scénario : contexte, modules mobilisés, ROI démontrable.", personne: "David", statut: "A-faire", priorite: "Haute", echeance: "2026-06-10", note: "" },
+  { id: 5, ref: "D5", titre: "Renseignement domaine .fr / .com LENAXIS", description: "Vérification propriété, dépôt INPI, disponibilité noms de domaine .fr et .com pour sécuriser actif marque. À voir avec Guillaume pour valider l'angle technique.", personne: "David", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-05", note: "" },
+  { id: 6, ref: "D6", titre: "Transmission CR à Maître Caprioli pour validation", description: "Compte rendu de réunion envoyé à Caprioli pour validation juridique des orientations stratégiques actées. PAS de contact AUREAL tant que la stratégie de production n'est pas mise en place dans les 3 semaines.", personne: "David", statut: "A-faire", priorite: "Haute", echeance: "2026-05-28", note: "Blocage explicite : aucun contact Lucien/Eric AUREAL avant maturation du dossier." },
+  { id: 7, ref: "D7", titre: "Process de fonctionnement formalisé 3 participants", description: "Document court définissant le rythme des points hebdomadaires (vendredi), modalités Slack/mail/visio, livrables intermédiaires, indicateurs d'avancement.", personne: "David", statut: "A-faire", priorite: "Moyenne", echeance: "2026-05-30", note: "" },
+
+  { id: 10, ref: "R0", titre: "Transmettre liste détaillée des tâches techniques", description: "ACTION PRÉALABLE BLOQUANTE. Romain transmet à David sa liste détaillée des tâches techniques avec calendrier jour par jour, dépendances, risques de dérapage identifiés. Aucun chantier R1-R7 n'est lancé tant que cette liste n'est pas validée par David et Guillaume.", personne: "Romain", statut: "A-faire", priorite: "Haute", echeance: "2026-05-30", note: "ENGAGEMENT PLEIN TEMPS 3 SEMAINES OBTENU EN RÉUNION." },
+  { id: 11, ref: "R1", titre: "Matching alertes WATCH ↔ critères AUDIT", description: "Le script d'alertes existant doit produire un matching satisfaisant entre alertes captées et critères des questionnaires. Fonctionnalité phare actuellement non satisfaisante. Démontrable sur cas d'usage agroalimentaire.", personne: "Romain", statut: "A-faire", priorite: "Haute", echeance: "2026-06-04", note: "Priorité 1 absolue. Argument commercial fort." },
+  { id: 12, ref: "R2", titre: "UX LIVESTREAM repositionné en diagnostic visuel", description: "Parcours utilisateur complet : envoi photo / image 360° / Google Street View → détection risques → pointage spatial sur image → renvoi vers audit avec pré-remplissage. UX testable en démonstration sans assistance.", personne: "Romain", statut: "A-faire", priorite: "Haute", echeance: "2026-06-11", note: "Arbitrage clé : abandon visio, position diagnostic visuel par image." },
+  { id: 13, ref: "R3", titre: "Ingestion documentaire vectorisée + Mistral custom", description: "Upload de documents avec vectorisation automatique. Modèle Mistral entraîné sur rapports d'audit historiques + fiches ARIA. Démonstration : requête sur procédure → retour procédure et PDF source en moins d'une seconde.", personne: "Romain", statut: "A-faire", priorite: "Haute", echeance: "2026-06-11", note: "Mistral open source français = souveraineté." },
+  { id: 14, ref: "R4", titre: "Connexion statistiques sectorielles à AUDIT", description: "Fonctionnalité existante mais non branchée : montrer moyenne sectorielle au clic sur critère pendant audit. Rend visible le bénéfice des 2 557 audits historiques.", personne: "Romain", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-09", note: "" },
+  { id: 15, ref: "R5", titre: "Collaboration IA-humain (pré-remplissage + validation)", description: "Agent IA pré-remplit audits comme utilisateur distinct, validation humaine systématique. UX claire distinguant saisie IA et saisie humaine.", personne: "Romain", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-10", note: "" },
+  { id: 16, ref: "R6", titre: "Tests fonctionnels agent IA conversationnel", description: "Tester en profondeur l'agent IA existant sur tous les parcours principaux (recherche procédure, déclenchement action, requête statistique). Identifier et corriger les bugs.", personne: "Romain", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-11", note: "" },
+  { id: 17, ref: "R7", titre: "Refactorisation ontologie unifiée des risques (CONDITIONNEL)", description: "Unification des duplications entre WATCH, AUDIT et déclaration accident autour d'une structure objet-événement-probabilité. UNIQUEMENT si R1-R6 sécurisés. Conserver appellation 'ontologie unifiée des risques' ou 'modèle objet-événement-probabilité'.", personne: "Romain", statut: "A-faire", priorite: "Standard", echeance: "2026-06-12", note: "Terme historique abandonné. Conserver uniquement appellation 'ontologie unifiée des risques'." },
+
+  { id: 20, ref: "G1", titre: "Position d'engagement : offre OU liste de tâches", description: "Réponse écrite explicite à David sur deux scénarios. Scénario A : offre d'acquisition ou de partenariat capitalistique (modalités, calendrier, montants). Scénario B : liste précise des tâches que ses équipes prennent en charge en appui à Romain, modalités contractuelles, calendrier de mise en place.", personne: "Guillaume", statut: "A-faire", priorite: "Haute", echeance: "2026-06-02", note: "ACTION BLOQUANTE pour structurer la suite." },
+  { id: 21, ref: "G2", titre: "Validation technique externe hebdomadaire", description: "Relecture des chantiers Romain au fur et à mesure, validation directions techniques, signalement des risques. Pas de touche au code. Une session par semaine.", personne: "Guillaume", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-12", note: "Récurrent hebdomadaire" },
+  { id: 22, ref: "G3", titre: "Coaching pitch avec David", description: "Entraînement structuré du discours acquéreur de David, semaine après semaine. Cadrage strict autour des 3 forces validées et des 5 arbitrages actés. Une session par semaine minimum.", personne: "Guillaume", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-12", note: "Récurrent hebdomadaire" },
+
+  { id: 30, ref: "M1", titre: "Point d'avancement mi-parcours à 3", description: "Réunion bilan à mi-parcours David-Romain-Guillaume pour valider l'avancement des chantiers prioritaires Romain et l'arbitrage sur la priorité R7 conditionnelle.", personne: "Tous", statut: "A-faire", priorite: "Haute", echeance: "2026-06-05", note: "" },
+  { id: 31, ref: "M2", titre: "Réunion de pré-présentation finale", description: "Réunion ultime David-Romain-Guillaume pour valider la présentation acquéreur, tester le pitch en live, vérifier la cohérence Data Room + discours + démonstration produit.", personne: "Tous", statut: "A-faire", priorite: "Haute", echeance: "2026-06-12", note: "ÉCHÉANCE FINALE ABSOLUE" }
+];
+
+const STORAGE_KEY = "lenaxis_gestion_projet_v2";
+let taches = [];
+let editingId = null;
+let chartPersonne = null;
+let chartStatut = null;
+
+function charger() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (data) {
+    try { taches = JSON.parse(data); }
+    catch(e) { taches = JSON.parse(JSON.stringify(TACHES_INITIALES)); }
+  } else {
+    taches = JSON.parse(JSON.stringify(TACHES_INITIALES));
+    sauvegarderLocal();
+  }
+}
+
+function sauvegarderLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(taches));
+}
+
+function rendre() {
+  rendreKPI();
+  rendreCharts();
+  rendreListe();
+  rendreNotification();
+}
+
+function rendreKPI() {
+  const total = taches.length;
+  const terminees = taches.filter(t => t.statut === "Termine").length;
+  const enCours = taches.filter(t => t.statut === "En-cours").length;
+  const bloquees = taches.filter(t => t.statut === "Bloque").length;
+  const aFaire = taches.filter(t => t.statut === "A-faire").length;
+  const aujourdhui = new Date();
+  aujourdhui.setHours(0,0,0,0);
+  const enRetard = taches.filter(t => t.statut !== "Termine" && new Date(t.echeance) < aujourdhui).length;
+  const aujourdhuiStr = aujourdhui.toISOString().split("T")[0];
+  const aujourdhuiCount = taches.filter(t => t.statut !== "Termine" && t.echeance === aujourdhuiStr).length;
+  const tauxAvancement = total > 0 ? Math.round((terminees / total) * 100) : 0;
+
+  document.getElementById("kpi-grid").innerHTML = `
+    <div class="kpi success">
+      <div class="label">Avancement global</div>
+      <div class="value">${tauxAvancement}%</div>
+      <div class="extra">${terminees} / ${total} tâches</div>
+    </div>
+    <div class="kpi">
+      <div class="label">À faire</div>
+      <div class="value">${aFaire}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">En cours</div>
+      <div class="value">${enCours}</div>
+    </div>
+    <div class="kpi danger">
+      <div class="label">Bloquées</div>
+      <div class="value">${bloquees}</div>
+    </div>
+    <div class="kpi danger">
+      <div class="label">En retard</div>
+      <div class="value">${enRetard}</div>
+    </div>
+    <div class="kpi warning">
+      <div class="label">Aujourd'hui</div>
+      <div class="value">${aujourdhuiCount}</div>
+    </div>
+  `;
+}
+
+function rendreCharts() {
+  const personnes = ["David", "Romain", "Guillaume", "Tous"];
+  const dataPersonne = personnes.map(p => {
+    const tachesP = taches.filter(t => t.personne === p);
+    const terminees = tachesP.filter(t => t.statut === "Termine").length;
+    return { personne: p, total: tachesP.length, terminees };
+  });
+
+  if (chartPersonne) chartPersonne.destroy();
+  chartPersonne = new Chart(document.getElementById("chart-personne"), {
+    type: "bar",
+    data: {
+      labels: dataPersonne.map(d => d.personne),
+      datasets: [
+        { label: "Total", data: dataPersonne.map(d => d.total), backgroundColor: "#e1e4e8" },
+        { label: "Terminées", data: dataPersonne.map(d => d.terminees), backgroundColor: "#00B9D6" }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+
+  const statuts = ["A-faire", "En-cours", "Bloque", "Termine"];
+  const labels = ["À faire", "En cours", "Bloqué", "Terminé"];
+  const couleurs = ["#e1e4e8", "#cce5ff", "#f8d7da", "#d4edda"];
+  const dataStatut = statuts.map(s => taches.filter(t => t.statut === s).length);
+
+  if (chartStatut) chartStatut.destroy();
+  chartStatut = new Chart(document.getElementById("chart-statut"), {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [{ data: dataStatut, backgroundColor: couleurs }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "right" } }
+    }
+  });
+}
+
+function rendreListe() {
+  const filtrePersonne = document.getElementById("filtre-personne").value;
+  const filtreStatut = document.getElementById("filtre-statut").value;
+  const tri = document.getElementById("tri").value;
+  const recherche = document.getElementById("recherche").value.toLowerCase();
+
+  let liste = [...taches];
+
+  if (filtrePersonne) liste = liste.filter(t => t.personne === filtrePersonne);
+  if (filtreStatut) liste = liste.filter(t => t.statut === filtreStatut);
+  if (recherche) {
+    liste = liste.filter(t =>
+      (t.titre || "").toLowerCase().includes(recherche) ||
+      (t.description || "").toLowerCase().includes(recherche) ||
+      (t.ref || "").toLowerCase().includes(recherche)
+    );
+  }
+
+  const ordrePriorite = { Haute: 0, Moyenne: 1, Standard: 2 };
+  const ordreStatut = { "Bloque": 0, "En-cours": 1, "A-faire": 2, "Termine": 3 };
+  liste.sort((a, b) => {
+    if (tri === "echeance") return new Date(a.echeance) - new Date(b.echeance);
+    if (tri === "priorite") return ordrePriorite[a.priorite] - ordrePriorite[b.priorite];
+    if (tri === "personne") return a.personne.localeCompare(b.personne);
+    if (tri === "statut") return ordreStatut[a.statut] - ordreStatut[b.statut];
+    return 0;
+  });
+
+  const container = document.getElementById("liste-taches");
+
+  if (liste.length === 0) {
+    container.innerHTML = '<div class="empty-state">Aucune tâche ne correspond aux filtres.</div>';
+    return;
+  }
+
+  const aujourdhui = new Date();
+  aujourdhui.setHours(0,0,0,0);
+  container.innerHTML = liste.map(t => {
+    const dateEcheance = new Date(t.echeance);
+    const joursRestants = Math.ceil((dateEcheance - aujourdhui) / (1000 * 60 * 60 * 24));
+    const enRetard = t.statut !== "Termine" && joursRestants < 0;
+    const urgent = t.statut !== "Termine" && joursRestants >= 0 && joursRestants <= 2;
+
+    let textEcheance = formatDate(t.echeance);
+    if (t.statut !== "Termine") {
+      if (joursRestants < 0) textEcheance += ` ⚠️ ${Math.abs(joursRestants)}j retard`;
+      else if (joursRestants === 0) textEcheance += " 🔴 Aujourd'hui";
+      else if (joursRestants === 1) textEcheance += " 🟠 Demain";
+      else if (joursRestants <= 7) textEcheance += ` (J-${joursRestants})`;
+    }
+
+    return `
+      <div class="task statut-${t.statut} ${enRetard ? 'en-retard' : ''}">
+        <div class="ref-block">
+          <div class="ref">${t.ref || '—'}</div>
+          <span class="badge badge-personne-${t.personne}">${t.personne}</span>
+        </div>
+        <div>
+          <div class="titre">${escapeHtml(t.titre)}</div>
+          <div class="description">${escapeHtml(t.description || '')}</div>
+          ${t.note ? `<div class="meta-info"><em>💬 ${escapeHtml(t.note)}</em></div>` : ''}
+        </div>
+        <div><span class="badge badge-statut-${t.statut}">${labelStatut(t.statut)}</span></div>
+        <div><span class="badge badge-priorite-${t.priorite}">${t.priorite}</span></div>
+        <div class="echeance ${urgent || enRetard ? 'urgent' : ''}">${textEcheance}</div>
+        <div class="actions">
+          <button class="edit" onclick="editer(${t.id})" title="Modifier">✏️</button>
+          ${t.statut !== "Termine"
+            ? `<button class="complete" onclick="cloturer(${t.id})" title="Clôturer">✓</button>`
+            : `<button onclick="rouvrir(${t.id})" title="Réouvrir">↻</button>`}
+          <button class="delete" onclick="supprimer(${t.id})" title="Supprimer">🗑</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function rendreNotification() {
+  const aujourdhui = new Date();
+  aujourdhui.setHours(0,0,0,0);
+  const aujourdhuiStr = aujourdhui.toISOString().split("T")[0];
+  const tachesAujourdhui = taches.filter(t => t.statut !== "Termine" && t.echeance === aujourdhuiStr);
+  const tachesRetard = taches.filter(t => t.statut !== "Termine" && new Date(t.echeance) < aujourdhui);
+
+  const banner = document.getElementById("notification-banner");
+  const text = document.getElementById("notification-text");
+
+  if (tachesAujourdhui.length > 0 || tachesRetard.length > 0) {
+    let msg = [];
+    if (tachesRetard.length > 0) msg.push(`<strong>${tachesRetard.length}</strong> tâche(s) en retard`);
+    if (tachesAujourdhui.length > 0) msg.push(`<strong>${tachesAujourdhui.length}</strong> tâche(s) à boucler aujourd'hui`);
+    text.innerHTML = msg.join(" — ");
+    banner.classList.add("active");
+  } else {
+    banner.classList.remove("active");
+  }
+}
+
+function formatDate(d) {
+  if (!d) return "—";
+  const date = new Date(d);
+  return date.toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short" });
+}
+
+function labelStatut(s) {
+  return { "A-faire": "À faire", "En-cours": "En cours", "Bloque": "Bloqué", "Termine": "Terminé" }[s] || s;
+}
+
+function escapeHtml(t) {
+  const div = document.createElement("div");
+  div.textContent = t || "";
+  return div.innerHTML;
+}
+
+function toast(message) {
+  const t = document.getElementById("toast");
+  t.textContent = message;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+function ouvrirModal(id = null) {
+  editingId = id;
+  document.getElementById("modal-titre").textContent = id ? "Modifier la tâche" : "Nouvelle tâche";
+  if (id) {
+    const t = taches.find(x => x.id === id);
+    document.getElementById("form-id").value = t.id;
+    document.getElementById("form-ref").value = t.ref || "";
+    document.getElementById("form-titre").value = t.titre || "";
+    document.getElementById("form-description").value = t.description || "";
+    document.getElementById("form-personne").value = t.personne || "David";
+    document.getElementById("form-statut").value = t.statut || "A-faire";
+    document.getElementById("form-priorite").value = t.priorite || "Moyenne";
+    document.getElementById("form-echeance").value = t.echeance || "";
+    document.getElementById("form-note").value = t.note || "";
+  } else {
+    document.getElementById("form-id").value = "";
+    document.getElementById("form-ref").value = "";
+    document.getElementById("form-titre").value = "";
+    document.getElementById("form-description").value = "";
+    document.getElementById("form-personne").value = "David";
+    document.getElementById("form-statut").value = "A-faire";
+    document.getElementById("form-priorite").value = "Moyenne";
+    document.getElementById("form-echeance").value = new Date().toISOString().split("T")[0];
+    document.getElementById("form-note").value = "";
+  }
+  document.getElementById("modal").classList.add("active");
+}
+
+function fermerModal() {
+  document.getElementById("modal").classList.remove("active");
+  editingId = null;
+}
+
+function sauvegarder() {
+  const data = {
+    ref: document.getElementById("form-ref").value,
+    titre: document.getElementById("form-titre").value,
+    description: document.getElementById("form-description").value,
+    personne: document.getElementById("form-personne").value,
+    statut: document.getElementById("form-statut").value,
+    priorite: document.getElementById("form-priorite").value,
+    echeance: document.getElementById("form-echeance").value,
+    note: document.getElementById("form-note").value
+  };
+
+  if (!data.titre) { alert("Le titre est obligatoire"); return; }
+  if (!data.echeance) { alert("La date d'échéance est obligatoire"); return; }
+
+  if (editingId) {
+    const idx = taches.findIndex(t => t.id === editingId);
+    taches[idx] = { ...taches[idx], ...data };
+    toast("Tâche modifiée");
+  } else {
+    const newId = Math.max(0, ...taches.map(t => t.id)) + 1;
+    taches.push({ id: newId, ...data });
+    toast("Tâche créée");
+  }
+  sauvegarderLocal();
+  fermerModal();
+  rendre();
+}
+
+function editer(id) { ouvrirModal(id); }
+
+function cloturer(id) {
+  const idx = taches.findIndex(t => t.id === id);
+  if (idx >= 0) {
+    taches[idx].statut = "Termine";
+    sauvegarderLocal();
+    rendre();
+    toast("Tâche clôturée");
+  }
+}
+
+function rouvrir(id) {
+  const idx = taches.findIndex(t => t.id === id);
+  if (idx >= 0) {
+    taches[idx].statut = "En-cours";
+    sauvegarderLocal();
+    rendre();
+    toast("Tâche réouverte");
+  }
+}
+
+function supprimer(id) {
+  if (!confirm("Supprimer définitivement cette tâche ?")) return;
+  taches = taches.filter(t => t.id !== id);
+  sauvegarderLocal();
+  rendre();
+  toast("Tâche supprimée");
+}
+
+function exporter() {
+  const data = JSON.stringify(taches, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `LENAXIS_taches_${new Date().toISOString().split("T")[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast("Export téléchargé");
+}
+
+function importer(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      taches = JSON.parse(e.target.result);
+      sauvegarderLocal();
+      rendre();
+      toast("Import réussi");
+    } catch(err) { alert("Fichier JSON invalide"); }
+  };
+  reader.readAsText(file);
+}
+
+function reinitialiser() {
+  if (!confirm("Réinitialiser toutes les tâches aux valeurs initiales du CR ? Tes modifications seront perdues.")) return;
+  taches = JSON.parse(JSON.stringify(TACHES_INITIALES));
+  sauvegarderLocal();
+  rendre();
+  toast("Données réinitialisées");
+}
+
+function copierURL() {
+  const url = window.location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      toast("URL copiée dans le presse-papier");
+    }).catch(() => {
+      prompt("Copie cette URL :", url);
+    });
+  } else {
+    prompt("Copie cette URL :", url);
+  }
+}
+
+charger();
+rendre();
+setInterval(rendreNotification, 60000);
+</script>
+
+</body>
+</html>
