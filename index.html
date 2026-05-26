@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -43,164 +43,682 @@ body {
 header {
   background: var(--navy);
   color: white;
-  padding: 18px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   border-bottom: 3px solid var(--cyan);
   position: sticky;
   top: 0;
   z-index: 50;
   box-shadow: 0 2px 8px rgba(11,30,63,0.15);
 }
+.header-main {
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.header-titre { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
 header h1 {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.3px;
+  line-height: 1;
 }
-header h1 span { color: var(--cyan); font-weight: 500; margin-left: 8px; }
-.header-actions { display: flex; gap: 8px; }
+header h1 span { color: var(--cyan); font-weight: 500; margin-left: 6px; font-size: 14px; }
+.header-sous-titre {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 400;
+}
+.header-sous-titre b { color: var(--cyan); font-weight: 600; }
+
+.header-warning {
+  background: #78350F;
+  color: #FEF3C7;
+  padding: 8px 22px;
+  font-size: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.header-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .btn-header {
   background: rgba(255,255,255,0.08);
   color: white;
   border: 1px solid rgba(255,255,255,0.2);
-  padding: 7px 14px;
+  padding: 7px 12px;
   border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 40px;
+  min-width: 40px;
+}
+.btn-header:hover { background: rgba(255,255,255,0.18); border-color: var(--cyan); }
+
+/* BANDEAU INFO (astuce URL partage) */
+.info-banner {
+  background: linear-gradient(135deg, var(--cyan-soft) 0%, #DBF7FE 100%);
+  border-bottom: 1px solid #B6E8F0;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--navy);
+  line-height: 1.5;
+}
+.info-banner .info-icon { font-size: 18px; flex-shrink: 0; }
+.info-banner .info-text { flex: 1; }
+.info-banner .info-text b { color: var(--cyan); font-weight: 700; }
+.info-banner .info-close {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: var(--navy);
+  font-size: 18px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.info-banner .info-close:hover { background: rgba(255,255,255,0.6); }
+
+/* MODAL AVANCEMENT — jauge circulaire géante */
+.gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0 20px;
+}
+.gauge-svg { width: 220px; height: 220px; position: relative; }
+.gauge-svg svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge-svg .g-bg { stroke: #E5E7EB; }
+.gauge-svg .g-fg { transition: stroke-dasharray 1s ease-out; }
+.gauge-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.gauge-center .gauge-pct {
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+.gauge-center .gauge-lbl {
+  font-size: 11px;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+.gauge-detail {
+  font-size: 14px;
+  color: var(--grey-700);
+  margin-top: 16px;
+  text-align: center;
+}
+.gauge-detail b { color: var(--navy); font-weight: 700; }
+
+.echeance-box {
+  background: var(--cyan-soft);
+  border: 1px solid #B6E8F0;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 14px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.echeance-box.alert { background: #FEF3F2; border-color: #FECDD3; }
+.echeance-box.proche { background: #FEF9E7; border-color: #FCE7A8; }
+.echeance-cell { text-align: center; }
+.echeance-cell .val {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+}
+.echeance-box.alert .val { color: var(--red); }
+.echeance-box.proche .val { color: var(--amber); }
+.echeance-cell .lbl {
+  font-size: 10px;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.statut-projet {
+  text-align: center;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  font-size: 15px;
+}
+.statut-projet.ok { background: var(--green-soft); color: #047857; }
+.statut-projet.alerte { background: var(--red-soft); color: var(--red); }
+.statut-projet.proche { background: var(--amber-soft); color: var(--amber); }
+
+.progress-personne {
+  display: grid;
+  grid-template-columns: 90px 1fr 60px;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.progress-personne .pp-nom { font-weight: 600; color: var(--navy); }
+.progress-personne .pp-bar { height: 14px; background: var(--grey-100); border-radius: 4px; overflow: hidden; position: relative; }
+.progress-personne .pp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan) 0%, #00D4F0 100%);
+  transition: width 0.6s ease-out;
+}
+.progress-personne .pp-text {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 12px;
+}
+
+.config-date {
+  background: var(--grey-50);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--grey-300);
+  margin-top: 14px;
+  font-size: 13px;
+}
+.config-date label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--grey-700);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 0;
+}
+.config-date input {
+  padding: 8px 12px;
+  border: 1px solid var(--grey-300);
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  font-family: inherit;
+}
+
+/* FAB mobile (bouton flottant +) */
+.fab {
+  position: fixed;
+  bottom: 70px;
+  right: 18px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--cyan);
+  color: var(--navy);
+  border: none;
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,185,214,0.5);
+  z-index: 40;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.fab:hover { background: white; }
+
+/* ============================================ */
+/* RESPONSIVE iPhone / Mobile                   */
+/* ============================================ */
+@media (max-width: 768px) {
+  body { font-size: 14px; }
+
+  header {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  header h1 { font-size: 15px; flex: 0 0 auto; }
+  header h1 span { display: none; }
+  .btn-avancement {
+    padding: 6px 12px;
+    max-width: none;
+    flex: 1;
+    min-width: 110px;
+  }
+  .btn-avancement .ba-pct { font-size: 18px; }
+  .btn-avancement .ba-lbl { font-size: 9px; letter-spacing: 0.5px; }
+  .header-actions { gap: 4px; margin-left: 0; }
+  .btn-header { padding: 6px 10px; font-size: 12px; min-height: 36px; min-width: 36px; }
+  .btn-header.primary { display: none; }
+
+  .dashboard { padding: 14px 12px; }
+  .kpis-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kpi { padding: 10px 10px; }
+  .kpi .val { font-size: 20px; }
+  .kpi .lbl { font-size: 9px; }
+  .graphs-row { grid-template-columns: 1fr; gap: 12px; }
+  .graph-card { padding: 14px 14px; }
+  .donut-svg { width: 110px; height: 110px; }
+
+  .help-banner { margin: 12px 12px; font-size: 12px; padding: 10px 12px; }
+
+  .filtres { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
+  .filtres label { display: none; }
+  .filtres select, .filtres input { font-size: 16px; padding: 8px 10px; flex: 1; min-width: 0; }
+  .stats { width: 100%; margin-left: 0; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--grey-200); font-size: 11px; }
+
+  .container { padding: 14px 12px 100px; }
+
+  .tache {
+    grid-template-columns: 1fr;
+    margin-bottom: 12px;
+  }
+  .col-ref {
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--grey-200);
+    padding: 10px 14px;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+  .col-actions-gauche { display: none; }
+  .col-contenu { padding: 12px 14px; }
+  .col-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-left: none;
+    border-top: 1px solid var(--grey-200);
+    padding: 10px 14px;
+    background: var(--grey-50);
+  }
+  .col-actions-droite {
+    display: flex;
+    flex-direction: row;
+    border-left: none;
+    border-top: 1px solid var(--grey-200);
+    padding: 8px 12px;
+    background: white;
+    justify-content: space-around;
+    gap: 8px;
+  }
+  .col-actions-droite .btn-action-droite {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--grey-300);
+    border-radius: 8px;
+  }
+  .col-actions-droite .btn-action-droite svg { width: 18px; height: 18px; }
+  .col-actions-droite .mobile-action { display: flex !important; }
+  .mobile-action {
+    flex: 1;
+    height: 44px;
+    border: 1px solid var(--grey-300);
+    border-radius: 8px;
+    background: white;
+    color: var(--grey-700);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    position: relative;
+    font-family: inherit;
+  }
+  .mobile-action.relance { background: #FEF3C7; border-color: #FCE7A8; color: #92400E; }
+  .mobile-action.cr { background: var(--cyan-soft); border-color: #B6E8F0; color: var(--navy); }
+  .mobile-action svg { width: 18px; height: 18px; }
+  .mobile-action .badge-count-m {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--navy);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+    border: 2px solid white;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .groupe-titre { font-size: 12px; padding-bottom: 4px; }
+
+  .modal { max-width: 100%; max-height: 95vh; border-radius: 16px 16px 0 0; margin-bottom: 0; }
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal-body { padding: 16px; }
+  .modal-footer { padding: 12px 16px; flex-wrap: wrap; }
+  .btn-modal { flex: 1; padding: 12px 16px; min-height: 44px; }
+  .modal-body input, .modal-body select, .modal-body textarea { font-size: 16px; }
+
+  .gauge-svg { width: 180px; height: 180px; }
+  .gauge-center .gauge-pct { font-size: 44px; }
+
+  .fab { display: flex; }
+
+  footer { padding: 8px 12px; font-size: 10px; }
+}
+
+@media (max-width: 380px) {
+  header h1 { font-size: 14px; }
+  .btn-avancement { padding: 5px 10px; }
+  .btn-avancement .ba-pct { font-size: 16px; }
+  .kpis-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* TABLEAU DE BORD */
+.dashboard {
+  background: var(--grey-50);
+  padding: 18px 22px;
+}
+
+/* KPI row — 6 cards façon capture */
+.kpis-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.kpi {
+  background: white;
+  border-radius: 10px;
+  padding: 16px 18px;
+  border: 1px solid var(--grey-200);
+  box-shadow: 0 1px 3px rgba(11,30,63,0.04);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.kpi:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(11,30,63,0.08); }
+.kpi::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--cyan);
+}
+.kpi.alert::before { background: var(--red); }
+.kpi.proche::before { background: var(--amber); }
+.kpi.success::before { background: var(--green); }
+.kpi .lbl {
+  font-size: 10px;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.kpi .val {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+}
+.kpi.alert .val { color: var(--red); }
+.kpi.proche .val { color: var(--amber); }
+.kpi.success .val { color: var(--green); }
+.kpi .sub {
+  font-size: 11px;
+  color: var(--grey-500);
+  margin-top: 4px;
+  font-weight: 500;
+}
+.kpi.clickable { cursor: pointer; }
+.kpi.clickable:hover { border-color: var(--cyan); }
+
+/* Graphiques 2 colonnes */
+.graphs-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+.graph-card {
+  background: white;
+  border-radius: 10px;
+  padding: 18px 22px;
+  border: 1px solid var(--grey-200);
+  box-shadow: 0 1px 3px rgba(11,30,63,0.04);
+}
+.graph-titre {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+
+/* Légende en ligne */
+.legend-inline {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--grey-700);
+}
+.legend-inline .leg-item { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.legend-inline .swatch-i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* GRAPHIQUE BARRES VERTICALES (Avancement par responsable) */
+.bars-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 220px;
+  padding: 0 10px 30px;
+  position: relative;
+  border-left: 1px solid var(--grey-200);
+  border-bottom: 1px solid var(--grey-200);
+  margin-left: 24px;
+}
+.bars-yaxis {
+  position: absolute;
+  left: -24px;
+  top: 0;
+  bottom: 30px;
+  width: 24px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--grey-500);
+  text-align: right;
+  padding-right: 4px;
+}
+.bars-yaxis div { position: relative; transform: translateY(50%); }
+.bar-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  position: relative;
+  height: 100%;
+  flex: 1;
+  max-width: 110px;
+  justify-content: center;
+}
+.bar-group .bar-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--navy);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bar {
+  width: 32px;
+  background: var(--grey-200);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 0.4s ease-out;
+  min-height: 2px;
+}
+.bar.b-total { background: #E5E7EB; }
+.bar.b-termine { background: linear-gradient(180deg, #00B9D6 0%, #0099B5 100%); }
+.bar .bar-value {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+/* DONUTS SVG */
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.donut-svg {
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+  position: relative;
+}
+.donut-svg svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.donut-svg .donut-bg { stroke: #F1F5F9; }
+.donut-svg circle { transition: stroke-dasharray 0.6s ease-out; }
+.donut-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.donut-center .big {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.donut-center .small {
+  font-size: 10px;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.donut-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.legend-item {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.legend-item .swatch {
+  width: 12px; height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.legend-item .label { color: var(--grey-700); font-weight: 500; }
+.legend-item .value {
+  color: var(--navy);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+.legend-item .pct { color: var(--grey-500); font-size: 11px; margin-left: 4px; }
+
+@media (max-width: 1100px) {
+  .kpis-row { grid-template-columns: repeat(3, 1fr); }
+  .graphs-row { grid-template-columns: 1fr; }
+}
+
+/* TOOLBAR (zone filtres + actions) */
+.toolbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-200);
+  padding: 12px 22px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.toolbar .btn-tb {
+  background: white;
+  border: 1px solid var(--grey-300);
+  color: var(--grey-700);
+  padding: 9px 14px;
+  border-radius: 8px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s;
-}
-.btn-header:hover { background: rgba(255,255,255,0.18); border-color: var(--cyan); }
-.btn-header.primary { background: var(--cyan); border-color: var(--cyan); color: var(--navy); font-weight: 600; }
-.btn-header.primary:hover { background: white; }
-
-/* TABLEAU DE BORD */
-.dashboard {
-  background: white;
-  border-bottom: 1px solid var(--grey-200);
-  padding: 18px 28px;
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 24px;
-}
-.dash-card { display: flex; flex-direction: column; gap: 10px; }
-.dash-titre {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--grey-500);
-  display: flex;
+  min-height: 40px;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
 }
-.dash-titre b { color: var(--navy); font-weight: 700; font-size: 13px; letter-spacing: 0; text-transform: none; }
-.dash-titre .toggle-dash {
-  background: none; border: none; color: var(--grey-500); cursor: pointer;
-  font-size: 12px; text-transform: none; letter-spacing: 0;
-}
-.dash-titre .toggle-dash:hover { color: var(--navy); }
-
-/* Histogramme empilé par personne */
-.histo-personne { display: flex; flex-direction: column; gap: 6px; }
-.histo-ligne {
-  display: grid;
-  grid-template-columns: 70px 1fr 36px;
-  align-items: center;
-  gap: 8px;
-}
-.histo-ligne .nom { font-size: 12px; font-weight: 600; color: var(--navy); }
-.histo-ligne .total { font-size: 12px; color: var(--grey-500); text-align: right; font-variant-numeric: tabular-nums; }
-.histo-bar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; background: var(--grey-100); }
-.histo-seg { height: 100%; transition: all 0.2s; cursor: default; position: relative; }
-.histo-seg:hover { filter: brightness(1.1); }
-.histo-seg.s-A-faire { background: #9CA3AF; }
-.histo-seg.s-En-cours { background: #3B82F6; }
-.histo-seg.s-Bloque { background: #DC2626; }
-.histo-seg.s-Termine { background: #16A34A; }
-
-/* Donut/barres priorité */
-.histo-prio { display: flex; flex-direction: column; gap: 8px; }
-.prio-ligne {
-  display: grid;
-  grid-template-columns: 70px 1fr 30px;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-}
-.prio-ligne .label { font-weight: 600; color: var(--navy); }
-.prio-ligne .barre {
-  height: 14px;
-  background: var(--grey-100);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.prio-ligne .fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-.prio-ligne .count { text-align: right; color: var(--grey-700); font-variant-numeric: tabular-nums; font-weight: 600; }
-.prio-Haute-fill { background: var(--red); }
-.prio-Moyenne-fill { background: var(--amber); }
-.prio-Standard-fill { background: var(--grey-500); }
-
-/* Chiffres clés */
-.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.kpi {
-  background: var(--grey-50);
-  border-left: 3px solid var(--cyan);
-  padding: 10px 12px;
-  border-radius: 4px;
-}
-.kpi .val {
-  font-size: 22px;
-  font-weight: 700;
+.toolbar .btn-tb:hover { border-color: var(--cyan); color: var(--navy); }
+.toolbar .btn-tb.primary {
+  background: var(--cyan);
+  border-color: var(--cyan);
   color: var(--navy);
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
+  font-weight: 700;
 }
-.kpi .lbl {
-  font-size: 11px;
-  color: var(--grey-500);
-  margin-top: 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  font-weight: 600;
+.toolbar .btn-tb.primary:hover { background: #00D4F0; }
+.toolbar .btn-tb.danger { color: var(--red); border-color: #FECDD3; }
+.toolbar .btn-tb.danger:hover { background: var(--red-soft); }
+.toolbar select, .toolbar input {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 9px 12px;
+  border: 1px solid var(--grey-300);
+  border-radius: 8px;
+  background: white;
+  color: var(--grey-900);
+  min-height: 40px;
 }
-.kpi.alert { border-left-color: var(--red); }
-.kpi.alert .val { color: var(--red); }
-.kpi.proche { border-left-color: var(--amber); }
-.kpi.proche .val { color: var(--amber); }
-
-/* Légende statuts */
-.legende {
+.toolbar select:focus, .toolbar input:focus {
+  outline: 2px solid var(--cyan);
+  outline-offset: -1px;
+  border-color: var(--cyan);
+}
+.toolbar input[type="text"] { min-width: 200px; flex: 1; max-width: 320px; }
+.toolbar .search-wrap { display: flex; align-items: center; gap: 0; }
+.toolbar .search-wrap::before { content: '🔍'; font-size: 14px; margin-right: 4px; }
+.stats {
+  margin-left: auto;
   display: flex;
   gap: 12px;
   font-size: 11px;
   color: var(--grey-500);
-  margin-top: 2px;
-  flex-wrap: wrap;
 }
-.legende .dot { display: inline-flex; align-items: center; gap: 4px; }
-.legende .dot::before {
-  content: '';
-  width: 10px; height: 10px;
-  border-radius: 2px;
-  display: inline-block;
-}
-.legende .dot.af::before { background: #9CA3AF; }
-.legende .dot.ec::before { background: #3B82F6; }
-.legende .dot.bl::before { background: #DC2626; }
-.legende .dot.te::before { background: #16A34A; }
-
-.dashboard.collapsed { padding-top: 8px; padding-bottom: 8px; }
-.dashboard.collapsed .dash-card .histo-personne,
-.dashboard.collapsed .dash-card .histo-prio,
-.dashboard.collapsed .dash-card .kpis,
-.dashboard.collapsed .dash-card .legende { display: none; }
-
-@media (max-width: 900px) {
-  .dashboard { grid-template-columns: 1fr; }
-}
+.stats b { color: var(--navy); font-weight: 700; font-size: 13px; }
 
 /* FILTRES */
 .filtres {
@@ -288,7 +806,18 @@ header h1 span { color: var(--cyan); font-weight: 500; margin-left: 8px; }
   border-color: var(--cyan);
   box-shadow: 0 2px 8px rgba(0,185,214,0.12);
 }
-.tache.statut-Termine { opacity: 0.6; }
+.tache.statut-Termine {
+  opacity: 0.65;
+  background: var(--green-soft);
+}
+.tache.statut-Termine .tache-titre {
+  text-decoration: line-through;
+  text-decoration-color: var(--green);
+  text-decoration-thickness: 2px;
+  color: var(--grey-500);
+}
+.tache.statut-Termine .tache-description { color: var(--grey-500); }
+.tache.statut-Termine .col-ref { background: var(--green-soft); }
 .tache.statut-Bloque { border-left: 4px solid var(--red); }
 
 /* COLONNE 1 — REF + PERSONNE */
@@ -739,63 +1268,74 @@ footer b { color: var(--cyan); }
 <body>
 
 <header>
-  <h1>LENAXIS <span>Gestion de Projet Cession</span></h1>
-  <div class="header-actions">
-    <button class="btn-header" onclick="ouvrirContacts()">Contacts</button>
-    <button class="btn-header" onclick="exporterDonnees()">Exporter</button>
-    <button class="btn-header" onclick="document.getElementById('import-input').click()">Importer</button>
-    <input type="file" id="import-input" accept=".json" style="display:none" onchange="importerDonnees(event)">
-    <button class="btn-header primary" onclick="ouvrirNouvelleTache()">+ Nouvelle tâche</button>
+  <div class="header-main">
+    <div class="header-titre">
+      <h1>LENAXIS <span>Cession</span></h1>
+      <div class="header-sous-titre" id="header-sous-titre">David Museur · Romain Leclercq · Guillaume — Échéance finale : <b id="header-date-butoir">vendredi 12 juin 2026</b></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header" onclick="ouvrirContacts()" title="Contacts">👥</button>
+      <button class="btn-header" onclick="ouvrirAvancement()" title="Voir l'avancement détaillé">📊</button>
+    </div>
+  </div>
+  <div class="header-warning">
+    ⚠️ Stockage local au navigateur. Pour partager l'état avec un collègue, utilise « Exporter JSON » puis « Importer JSON ».
   </div>
 </header>
 
+<div class="info-banner" id="info-banner">
+  <span class="info-icon">💡</span>
+  <span class="info-text">Cette page est une URL stable que tu peux partager à Romain, Guillaume et Maître Caprioli. Chacun verra l'état initial du compte-rendu de réunion. Pour synchroniser les avancements, utilisez le bouton <b>« Exporter JSON »</b> pour échanger les mises à jour par mail.</span>
+  <button class="info-close" onclick="fermerInfoBanner()" title="Masquer">×</button>
+</div>
+
 <!-- TABLEAU DE BORD -->
 <div class="dashboard" id="dashboard">
-  <div class="dash-card">
-    <div class="dash-titre">
-      <span>Répartition par <b>personne</b></span>
-      <button class="toggle-dash" onclick="toggleDashboard()" id="toggle-dash-btn">Replier ▲</button>
+  <div class="kpis-row" id="kpis-grid"></div>
+  <div class="graphs-row">
+    <div class="graph-card">
+      <div class="graph-titre"><b>Avancement par responsable</b></div>
+      <div class="legend-inline">
+        <span class="leg-item"><span class="swatch-i" style="background:#E5E7EB"></span> Total</span>
+        <span class="leg-item"><span class="swatch-i" style="background:var(--cyan)"></span> Terminées</span>
+      </div>
+      <div id="bars-responsable"></div>
     </div>
-    <div class="histo-personne" id="histo-personne"></div>
-    <div class="legende">
-      <span class="dot af">À faire</span>
-      <span class="dot ec">En cours</span>
-      <span class="dot bl">Bloqué</span>
-      <span class="dot te">Terminé</span>
+    <div class="graph-card">
+      <div class="graph-titre"><b>Répartition par statut</b></div>
+      <div class="donut-wrap">
+        <div class="donut-svg" id="donut-statuts"></div>
+        <div class="donut-legend" id="legend-statuts"></div>
+      </div>
     </div>
-  </div>
-  <div class="dash-card">
-    <div class="dash-titre"><span>Par <b>priorité</b></span></div>
-    <div class="histo-prio" id="histo-prio"></div>
-  </div>
-  <div class="dash-card">
-    <div class="dash-titre"><span>Chiffres <b>clés</b></span></div>
-    <div class="kpis" id="kpis-grid"></div>
   </div>
 </div>
 
-<div class="filtres">
-  <label>Personne</label>
+<!-- TOOLBAR (filtres + actions) -->
+<div class="toolbar">
+  <button class="btn-tb primary" onclick="ouvrirNouvelleTache()">+ Nouvelle tâche</button>
   <select id="filtre-personne" onchange="afficherTaches()">
-    <option value="">Toutes</option>
+    <option value="">Toutes personnes</option>
   </select>
-  <label>Statut</label>
   <select id="filtre-statut" onchange="afficherTaches()">
-    <option value="">Tous</option>
+    <option value="">Tous statuts</option>
     <option value="A-faire">À faire</option>
     <option value="En-cours">En cours</option>
     <option value="Bloque">Bloqué</option>
     <option value="Termine">Terminé</option>
   </select>
-  <label>Priorité</label>
-  <select id="filtre-priorite" onchange="afficherTaches()">
-    <option value="">Toutes</option>
-    <option value="Haute">Haute</option>
-    <option value="Moyenne">Moyenne</option>
-    <option value="Standard">Standard</option>
+  <select id="tri" onchange="afficherTaches()">
+    <option value="echeance">Tri échéance</option>
+    <option value="priorite">Tri priorité</option>
+    <option value="personne">Tri personne</option>
+    <option value="statut">Tri statut</option>
   </select>
-  <label>Recherche</label>
-  <input type="text" id="filtre-texte" placeholder="Titre, description…" oninput="afficherTaches()" style="min-width:200px">
+  <input type="text" id="filtre-texte" placeholder="🔍 Rechercher..." oninput="afficherTaches()">
+  <button class="btn-tb" onclick="copierURL()" title="Copier l'URL de l'app dans le presse-papier">🔗 Copier URL</button>
+  <button class="btn-tb" onclick="exporterDonnees()" title="Télécharger un backup JSON">💾 Export</button>
+  <button class="btn-tb" onclick="document.getElementById('import-input').click()" title="Importer un backup JSON">📥 Import</button>
+  <input type="file" id="import-input" accept=".json" style="display:none" onchange="importerDonnees(event)">
+  <button class="btn-tb danger" onclick="resetDonnees()" title="Réinitialiser toutes les tâches (avec confirmation)">↻ Reset</button>
   <div class="stats">
     <span><b id="stat-total">0</b> tâches</span>
     <span><b id="stat-cours">0</b> en cours</span>
@@ -897,11 +1437,10 @@ footer b { color: var(--cyan); }
       <select id="edit-personne">
         <option>David</option>
         <option>Romain</option>
+        <option>Guillaume</option>
         <option>Charles</option>
         <option>Lucien</option>
         <option>Eric</option>
-        <option>Guillaume</option>
-        <option>Caprioli</option>
         <option>Tous</option>
       </select>
       <label>Titre</label>
@@ -958,6 +1497,49 @@ footer b { color: var(--cyan); }
   </div>
 </div>
 
+<!-- MODAL AVANCEMENT -->
+<div class="modal-overlay" id="modal-avancement-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📊 Avancement du projet</h2>
+      <button class="close" onclick="fermerModal('avancement')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="statut-projet" id="statut-projet">—</div>
+
+      <div class="gauge-wrap">
+        <div class="gauge-svg" id="gauge-svg"></div>
+        <div class="gauge-detail" id="gauge-detail"></div>
+      </div>
+
+      <div class="echeance-box" id="echeance-box">
+        <div class="echeance-cell">
+          <div class="val" id="jours-restants">—</div>
+          <div class="lbl">Jours restants</div>
+        </div>
+        <div class="echeance-cell">
+          <div class="val" id="date-cible">—</div>
+          <div class="lbl">Date butoir</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:13px; color:var(--navy); margin:18px 0 8px; text-transform:uppercase; letter-spacing:0.5px;">Avancement par contributeur</h3>
+      <div id="progress-personnes"></div>
+
+      <div class="config-date">
+        <label>Régler / modifier la date butoir du projet</label>
+        <input type="date" id="config-date-butoir" onchange="setDateButoir(this.value)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal secondary" onclick="fermerModal('avancement')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB nouvelle tâche (mobile) -->
+<button class="fab" onclick="ouvrirNouvelleTache()" title="Nouvelle tâche" style="display:none">+</button>
+
 <footer>
   LENAXIS — Gestion de Projet Cession — <b>Sauvegarde locale automatique</b> dans ce navigateur · Pense à <b>exporter</b> régulièrement en backup
 </footer>
@@ -972,6 +1554,13 @@ const TACHES_INITIALES = [
   { id: 2, ref: "D2", personne: "David", titre: "Transmettre documents clés à Guillaume", description: "V4 benchmark prix, pièce 05B ontologie, matrice consolidation Data Room, fiche technique consolidée.", statut: "A-faire", priorite: "Haute", echeance: "2026-05-30", note: "", cr: [] },
   { id: 3, ref: "D3", personne: "David", titre: "Proposer mode de fonctionnement avec Maître Caprioli", description: "Cadencer la validation juridique : cession, NDA renforcé, transferts historiques Eurosud 2020 + Finaxy 2024, diligence acquéreur.", statut: "A-faire", priorite: "Haute", echeance: "2026-06-03", note: "", cr: [] },
   { id: 4, ref: "D4", personne: "David", titre: "Réaliser 4 scénarios détaillés pour vidéo cas concrets", description: "4 cas d'utilisation LENAXIS et avantages pour acquéreurs. Trame écrite avant tournage. Validation Romain (tech) + Lucien/Eric (M&A) avant capture.", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-15", note: "", cr: [] },
+
+  // DAVID — Rituels récurrents
+  { id: 5, ref: "D5", personne: "David", titre: "Point quotidien avec Romain sur avancement", description: "Daily de coordination opérationnelle avec Romain sur l'avancement des chantiers techniques R0 à R11. Format court (15-30 min), point bloquants + arbitrages.", statut: "A-faire", priorite: "Haute", echeance: "2026-05-27", note: "🔄 Récurrent — Tous les jours.", cr: [] },
+  { id: 6, ref: "D6", personne: "David", titre: "Point quotidien avec Charles sur avancement", description: "Daily de coordination avec Charles Darmani sur l'avancement global du projet de cession. Synchronisation co-actionnaires, alignement sur priorités et décisions à venir.", statut: "A-faire", priorite: "Haute", echeance: "2026-05-27", note: "🔄 Récurrent — Tous les jours.", cr: [] },
+  { id: 7, ref: "D7", personne: "David", titre: "Travail UX avec Guillaume (tous les 2 jours)", description: "Session de travail David + Guillaume sur les améliorations UX du produit. Revue des chantiers UX en cours, arbitrages de design, validation des directions.", statut: "A-faire", priorite: "Moyenne", echeance: "2026-05-28", note: "🔄 Récurrent — Tous les 2 jours.", cr: [] },
+  { id: 8, ref: "D8", personne: "David", titre: "Simulation présentation + kit présentation (tous les 2 jours)", description: "Entraînement du pitch acquéreur avec mise en situation. Mise à jour du kit de présentation (deck, fiches techniques, scripts). Travail d'ancrage du discours autour des 3 forces validées.", statut: "A-faire", priorite: "Moyenne", echeance: "2026-05-28", note: "🔄 Récurrent — Tous les 2 jours.", cr: [] },
+
   // ROMAIN
   { id: 10, ref: "R0", personne: "Romain", titre: "Transmettre liste détaillée des tâches techniques", description: "ACTION PRÉALABLE BLOQUANTE. Romain transmet à David sa liste détaillée des tâches techniques avec calendrier jour par jour, dépendances, risques de dérapage identifiés. Aucun chantier R1-R7 n'est lancé tant que cette liste n'est pas validée par David et Guillaume.", statut: "A-faire", priorite: "Haute", echeance: "2026-05-30", note: "ENGAGEMENT PLEIN TEMPS 3 SEMAINES OBTENU EN RÉUNION.", cr: [] },
 
@@ -987,23 +1576,31 @@ const TACHES_INITIALES = [
   { id: 109, ref: "R9", personne: "Romain", titre: "Version mobile", description: "PWA d'abord (coût, time-to-market), React Native si les limites push/offline/caméra frappent. Pour les auditeurs terrain : flux de réponse d'audit, capture photo + vision, feed d'alertes, livestream. Tolérant au offline (queue de mutations, réconciliation au retour réseau). Surfaces d'admin/édition restent desktop.", statut: "A-faire", priorite: "Moyenne", echeance: "", note: "Priorité 9 sur 11 — PWA en premier choix.", cr: [] },
   { id: 110, ref: "R10", personne: "Romain", titre: "Module Réglementation / juridique", description: "Modéliser les réglementations comme entités typées (texte, scope, règles d'applicabilité — 's'applique si ICPE classe X'), versionnées. Critères d'audit qui pointent vers des règles, alertes catégorisées par domaine réglementaire, recos qui citent l'obligation sous-jacente. Bien plus simple par-dessus le JN — la régulation devient un overlay typé sur les entités.", statut: "A-faire", priorite: "Moyenne", echeance: "", note: "Priorité 10 sur 11 — overlay sur le JN (R1).", cr: [] },
   { id: 111, ref: "R11", personne: "Romain", titre: "Mise à l'échelle backend / infrastructure", description: "Pas une priorité, parqué pour quand la charge l'exigera. Quand Next.js + Mongo deviendront le goulot (jobs background flaky, push temps réel à beaucoup de clients, fan-out cross-modules) : queues (BullMQ sur Redis), event bus (Redis Streams ou NATS, Kafka si volume), WebSocket/SSE scalable au-delà du process Express unique, observabilité (OpenTelemetry). Déclencheur = symptômes de charge, pas une date.", statut: "A-faire", priorite: "Standard", echeance: "", note: "Priorité 11 sur 11 — PARQUÉ. Déclencheur = symptômes de charge, pas une date.", cr: [] },
-  // CAPRIOLI
-  { id: 30, ref: "C1", personne: "Caprioli", titre: "Validation NDA renforcé + Click-Through Agreement", description: "14 articles, pénalité 250K€ + astreinte 5K€/jour, durée 7 ans, Tribunal de Commerce Paris. Validation préalable à toute diffusion piece 03-D (données AXA nominatives).", statut: "A-faire", priorite: "Haute", echeance: "2026-06-05", note: "", cr: [] },
-  { id: 31, ref: "C2", personne: "Caprioli", titre: "Confirmation écrite transferts Eurosud 2020 + Finaxy 2024", description: "Préalable à la diffusion piece 04-QA Q6. Confirmation que les transferts historiques n'emportent aucune limitation sur la cession LENAXIS en cours.", statut: "A-faire", priorite: "Haute", echeance: "2026-06-05", note: "", cr: [] },
+
+  // GUILLAUME — Actions documentées en réunion
+  { id: 200, ref: "G1", personne: "Guillaume", titre: "Position d'engagement : offre OU liste de tâches", description: "Réponse écrite explicite à David sur deux scénarios. Scénario A : offre d'acquisition ou de partenariat capitalistique (modalités, calendrier, montants). Scénario B : liste précise des tâches que ses équipes prennent en charge en appui à Romain, modalités contractuelles, calendrier de mise en place.", statut: "A-faire", priorite: "Haute", echeance: "2026-06-02", note: "ACTION BLOQUANTE pour structurer la suite.", cr: [] },
+  { id: 201, ref: "G2", personne: "Guillaume", titre: "Validation technique externe hebdomadaire", description: "Relecture des chantiers Romain au fur et à mesure, validation directions techniques, signalement des risques. Pas de touche au code. Une session par semaine.", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-12", note: "Récurrent hebdomadaire.", cr: [] },
+  { id: 202, ref: "G3", personne: "Guillaume", titre: "Coaching pitch avec David", description: "Entraînement structuré du discours acquéreur de David, semaine après semaine. Cadrage strict autour des 3 forces validées et des 5 arbitrages actés. Une session par semaine minimum.", statut: "A-faire", priorite: "Moyenne", echeance: "2026-06-12", note: "Récurrent hebdomadaire.", cr: [] },
+  { id: 203, ref: "G4", personne: "Guillaume", titre: "Ressources de développement complémentaires (si scénario B)", description: "Si scénario B confirmé via G1, mise à disposition effective des développeurs sur les chantiers UX que Romain ne peut absorber. Modalités de coordination avec Romain à définir.", statut: "A-faire", priorite: "Moyenne", echeance: "", note: "Conditionnel à G1 scénario B.", cr: [] },
+
+  // RÉUNIONS À 3 — Documentées en CR
+  { id: 300, ref: "M1", personne: "Tous", titre: "Point d'avancement mi-parcours à 3 (David-Romain-Guillaume)", description: "Réunion bilan à mi-parcours pour valider l'avancement des chantiers prioritaires Romain et l'arbitrage sur la priorité R7 conditionnelle.", statut: "A-faire", priorite: "Haute", echeance: "2026-06-05", note: "", cr: [] },
+  { id: 301, ref: "M2", personne: "Tous", titre: "Réunion de pré-présentation finale (David-Romain-Guillaume)", description: "Réunion ultime pour valider la présentation acquéreur, tester le pitch en live, vérifier la cohérence Data Room + discours + démonstration produit.", statut: "A-faire", priorite: "Haute", echeance: "2026-06-12", note: "", cr: [] },
 ];
 
 const CONTACTS_DEFAUT = {
   'David': { nom: 'David Museur', email: 'david.museur@gmail.com' },
   'Romain': { nom: 'Romain Leclercq', email: '' },
+  'Guillaume': { nom: 'Guillaume', email: '' },
   'Charles': { nom: 'Charles Darmani', email: '' },
   'Lucien': { nom: 'Lucien Meney', email: 'lm@aureal.fr' },
   'Eric': { nom: 'Éric Refait', email: 'ed@aureal.fr' },
-  'Guillaume': { nom: 'Guillaume', email: '' },
-  'Caprioli': { nom: 'Maître Éric Caprioli', email: 'e.caprioli@caprioli-avocats.com' },
 };
 
 const STORAGE_KEY = 'lenaxis_taches';
 const CONTACTS_KEY = 'lenaxis_contacts';
+const DATE_BUTOIR_KEY = 'lenaxis_date_butoir';
+const DATE_DEBUT_KEY = 'lenaxis_date_debut';
 
 // =====================================================================
 // ÉTAT
@@ -1069,14 +1666,14 @@ function afficherTaches() {
   const container = document.getElementById('taches-container');
   const fPersonne = document.getElementById('filtre-personne').value;
   const fStatut = document.getElementById('filtre-statut').value;
-  const fPriorite = document.getElementById('filtre-priorite').value;
+  const fPriorite = ''; // plus de filtre dédié
   const fTexte = document.getElementById('filtre-texte').value.toLowerCase().trim();
 
   // Peupler dropdown personnes
   const personnes = [...new Set(taches.map(t => t.personne))].sort();
   const selP = document.getElementById('filtre-personne');
   const current = selP.value;
-  selP.innerHTML = '<option value="">Toutes</option>' + personnes.map(p => `<option value="${p}" ${p===current?'selected':''}>${escapeHtml(p)}</option>`).join('');
+  selP.innerHTML = '<option value="">Toutes personnes</option>' + personnes.map(p => `<option value="${p}" ${p===current?'selected':''}>${escapeHtml(p)}</option>`).join('');
 
   const filtrees = taches.filter(t => {
     if (fPersonne && t.personne !== fPersonne) return false;
@@ -1084,6 +1681,31 @@ function afficherTaches() {
     if (fPriorite && t.priorite !== fPriorite) return false;
     if (fTexte && !(t.titre.toLowerCase().includes(fTexte) || t.description.toLowerCase().includes(fTexte) || (t.ref||'').toLowerCase().includes(fTexte))) return false;
     return true;
+  });
+
+  // Tri
+  const tri = document.getElementById('tri') ? document.getElementById('tri').value : 'echeance';
+  const prioOrder = { 'Haute': 0, 'Moyenne': 1, 'Standard': 2 };
+  const statutOrder = { 'En-cours': 0, 'Bloque': 1, 'A-faire': 2, 'Termine': 3 };
+  const personneOrder = { 'David': 0, 'Romain': 1, 'Guillaume': 2, 'Charles': 3, 'Lucien': 4, 'Eric': 5, 'Tous': 6 };
+  filtrees.sort((a, b) => {
+    // Toujours pousser les terminées à la fin
+    if (a.statut === 'Termine' && b.statut !== 'Termine') return 1;
+    if (b.statut === 'Termine' && a.statut !== 'Termine') return -1;
+    if (tri === 'echeance') {
+      const ea = a.echeance || '9999-12-31';
+      const eb = b.echeance || '9999-12-31';
+      return ea.localeCompare(eb);
+    }
+    if (tri === 'priorite') return (prioOrder[a.priorite] ?? 9) - (prioOrder[b.priorite] ?? 9);
+    if (tri === 'statut') return (statutOrder[a.statut] ?? 9) - (statutOrder[b.statut] ?? 9);
+    if (tri === 'personne') {
+      const pa = personneOrder[a.personne] ?? 9;
+      const pb = personneOrder[b.personne] ?? 9;
+      if (pa !== pb) return pa - pb;
+      return (a.ref || '').localeCompare(b.ref || '');
+    }
+    return 0;
   });
 
   // Stats
@@ -1095,113 +1717,330 @@ function afficherTaches() {
   // Tableau de bord visuel
   rendDashboard(filtrees);
 
+  // Mise à jour bouton avancement dans le header
+  refreshHeaderAvancement();
+
   if (filtrees.length === 0) {
     container.innerHTML = `<div class="empty"><h3>Aucune tâche</h3><p>Modifie les filtres ou ajoute une nouvelle tâche.</p></div>`;
     return;
   }
 
-  // Grouper par personne
-  const groupes = {};
-  filtrees.forEach(t => {
-    if (!groupes[t.personne]) groupes[t.personne] = [];
-    groupes[t.personne].push(t);
-  });
-
-  const ordrePersonnes = ['David', 'Romain', 'Charles', 'Lucien', 'Eric', 'Guillaume', 'Caprioli', 'Tous'];
-  const personnesOrdonnees = Object.keys(groupes).sort((a,b) => {
-    const ia = ordrePersonnes.indexOf(a); const ib = ordrePersonnes.indexOf(b);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
-
-  container.innerHTML = personnesOrdonnees.map(p => {
-    const liste = groupes[p];
-    return `
-      <div class="groupe-personne">
-        <div class="groupe-titre">${escapeHtml(p)} <span class="compteur">${liste.length}</span></div>
-        ${liste.map(t => renderTache(t)).join('')}
-      </div>
-    `;
-  }).join('');
+  container.innerHTML = filtrees.map(t => renderTache(t)).join('');
 }
 
 function rendDashboard(filtrees) {
   const today = new Date().toISOString().slice(0,10);
   const dans5j = new Date(Date.now() + 5*86400000).toISOString().slice(0,10);
 
-  // ===== Histogramme par personne (empilé par statut) =====
-  const ordrePersonnes = ['David', 'Romain', 'Charles', 'Lucien', 'Eric', 'Guillaume', 'Caprioli', 'Tous'];
+  // ===== Calculs sur l'ensemble du projet (pas filtré) =====
+  const totalAll = taches.length;
+  const termineesAll = taches.filter(t => t.statut === 'Termine').length;
+  const pctGlobal = totalAll > 0 ? Math.round((termineesAll / totalAll) * 100) : 0;
+
+  // ===== KPIs sur l'ensemble du projet =====
+  const aFaire = taches.filter(t => t.statut === 'A-faire').length;
+  const enCours = taches.filter(t => t.statut === 'En-cours').length;
+  const bloquees = taches.filter(t => t.statut === 'Bloque').length;
+  const retard = taches.filter(t => t.echeance && t.echeance < today && t.statut !== 'Termine').length;
+  const aujourdhui = taches.filter(t => t.echeance === today && t.statut !== 'Termine').length;
+
+  document.getElementById('kpis-grid').innerHTML = `
+    <div class="kpi success clickable" onclick="ouvrirAvancement()" title="Voir l'avancement détaillé">
+      <div class="lbl">Avancement global</div>
+      <div class="val">${pctGlobal}%</div>
+      <div class="sub">${termineesAll} / ${totalAll} tâches</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">À faire</div>
+      <div class="val">${aFaire}</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">En cours</div>
+      <div class="val">${enCours}</div>
+    </div>
+    <div class="kpi ${bloquees > 0 ? 'alert' : ''}">
+      <div class="lbl">Bloquées</div>
+      <div class="val">${bloquees}</div>
+    </div>
+    <div class="kpi ${retard > 0 ? 'alert' : ''}">
+      <div class="lbl">En retard</div>
+      <div class="val">${retard}</div>
+    </div>
+    <div class="kpi ${aujourdhui > 0 ? 'proche' : ''}">
+      <div class="lbl">Aujourd'hui</div>
+      <div class="val">${aujourdhui}</div>
+    </div>
+  `;
+
+  // ===== Stats filtrés (pour bandeau bas) =====
+  document.getElementById('stat-total').textContent = filtrees.length;
+  document.getElementById('stat-cours').textContent = filtrees.filter(t => t.statut === 'En-cours').length;
+  document.getElementById('stat-retard').textContent = filtrees.filter(t => t.echeance && t.echeance < today && t.statut !== 'Termine').length;
+
+  // ===== Donut STATUTS (sur ensemble du projet) =====
+  const statuts = {
+    'A-faire': { label: 'À faire', count: 0, color: '#94A3B8' },
+    'En-cours': { label: 'En cours', count: 0, color: '#3B82F6' },
+    'Bloque': { label: 'Bloqué', count: 0, color: '#DC2626' },
+    'Termine': { label: 'Terminé', count: 0, color: '#16A34A' }
+  };
+  taches.forEach(t => { if (statuts[t.statut]) statuts[t.statut].count++; });
+  renderDonut('donut-statuts', 'legend-statuts', statuts, totalAll, 'tâches');
+
+  // ===== BARRES VERTICALES — Avancement par responsable =====
+  const ordrePersonnes = ['David', 'Romain', 'Guillaume', 'Charles', 'Lucien', 'Eric', 'Tous'];
   const parPersonne = {};
-  filtrees.forEach(t => {
-    if (!parPersonne[t.personne]) parPersonne[t.personne] = { 'A-faire':0, 'En-cours':0, 'Bloque':0, 'Termine':0, total:0 };
-    parPersonne[t.personne][t.statut] = (parPersonne[t.personne][t.statut] || 0) + 1;
+  taches.forEach(t => {
+    if (!parPersonne[t.personne]) parPersonne[t.personne] = { total: 0, terminees: 0 };
     parPersonne[t.personne].total++;
+    if (t.statut === 'Termine') parPersonne[t.personne].terminees++;
   });
+
   const personnesTri = Object.keys(parPersonne).sort((a,b) => {
     const ia = ordrePersonnes.indexOf(a); const ib = ordrePersonnes.indexOf(b);
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
 
-  const maxTotal = Math.max(...Object.values(parPersonne).map(p => p.total), 1);
-  const htmlHisto = personnesTri.map(p => {
-    const d = parPersonne[p];
-    const ratio = (d.total / maxTotal) * 100;
-    const segs = ['A-faire', 'En-cours', 'Bloque', 'Termine'].map(s => {
-      if (!d[s]) return '';
-      const pct = (d[s] / d.total) * 100;
-      const titre = `${p} — ${s.replace('-',' ')} : ${d[s]}`;
-      return `<div class="histo-seg s-${s}" style="width:${pct}%" title="${escapeHtml(titre)}"></div>`;
+  const maxVal = Math.max(...Object.values(parPersonne).map(p => p.total), 8);
+  // Échelle graduée : on arrondit au-dessus à un nombre rond
+  const echelle = maxVal <= 5 ? 5 : maxVal <= 10 ? 10 : maxVal <= 15 ? 15 : Math.ceil(maxVal / 5) * 5;
+  const steps = 5;
+
+  let yaxisHtml = '';
+  for (let i = 0; i <= steps; i++) {
+    yaxisHtml += `<div>${Math.round((echelle / steps) * i)}</div>`;
+  }
+
+  const barsHtml = personnesTri.length === 0 ? '<div style="color:var(--grey-500); padding: 20px; text-align: center; width:100%;">Aucune tâche</div>' :
+    personnesTri.map(p => {
+      const d = parPersonne[p];
+      const hTotal = (d.total / echelle) * 100;
+      const hTermine = (d.terminees / echelle) * 100;
+      return `
+        <div class="bar-group">
+          <div class="bar b-total" style="height:${hTotal}%" title="${p} — Total : ${d.total}">
+            <span class="bar-value">${d.total}</span>
+          </div>
+          <div class="bar b-termine" style="height:${hTermine}%" title="${p} — Terminées : ${d.terminees}">
+            ${d.terminees > 0 ? `<span class="bar-value" style="color:var(--cyan)">${d.terminees}</span>` : ''}
+          </div>
+          <div class="bar-label">${escapeHtml(p)}</div>
+        </div>
+      `;
     }).join('');
-    return `
-      <div class="histo-ligne">
-        <div class="nom">${escapeHtml(p)}</div>
-        <div class="histo-bar" style="width:${ratio}%; min-width:80px">${segs}</div>
-        <div class="total">${d.total}</div>
-      </div>
-    `;
-  }).join('') || '<div style="color:var(--grey-500); font-size:12px; padding:8px 0">Aucune tâche.</div>';
-  document.getElementById('histo-personne').innerHTML = htmlHisto;
 
-  // ===== Histogramme par priorité =====
-  const parPrio = { 'Haute':0, 'Moyenne':0, 'Standard':0 };
-  filtrees.forEach(t => { parPrio[t.priorite] = (parPrio[t.priorite] || 0) + 1; });
-  const maxPrio = Math.max(...Object.values(parPrio), 1);
-  const htmlPrio = ['Haute','Moyenne','Standard'].map(p => {
-    const n = parPrio[p] || 0;
-    const pct = (n / maxPrio) * 100;
-    return `
-      <div class="prio-ligne">
-        <div class="label">${p}</div>
-        <div class="barre"><div class="fill prio-${p}-fill" style="width:${pct}%"></div></div>
-        <div class="count">${n}</div>
-      </div>
-    `;
-  }).join('');
-  document.getElementById('histo-prio').innerHTML = htmlPrio;
-
-  // ===== KPIs =====
-  const totales = filtrees.length;
-  const enCours = filtrees.filter(t => t.statut === 'En-cours').length;
-  const bloquees = filtrees.filter(t => t.statut === 'Bloque').length;
-  const terminees = filtrees.filter(t => t.statut === 'Termine').length;
-  const retard = filtrees.filter(t => t.echeance && t.echeance < today && t.statut !== 'Termine').length;
-  const proche = filtrees.filter(t => t.echeance && t.echeance >= today && t.echeance <= dans5j && t.statut !== 'Termine').length;
-  const tauxAvancement = totales > 0 ? Math.round((terminees / totales) * 100) : 0;
-
-  document.getElementById('kpis-grid').innerHTML = `
-    <div class="kpi"><div class="val">${totales}</div><div class="lbl">Tâches affichées</div></div>
-    <div class="kpi"><div class="val">${enCours}</div><div class="lbl">En cours</div></div>
-    <div class="kpi ${retard > 0 ? 'alert' : ''}"><div class="val">${retard}</div><div class="lbl">En retard</div></div>
-    <div class="kpi ${proche > 0 ? 'proche' : ''}"><div class="val">${proche}</div><div class="lbl">Échéance ≤ 5j</div></div>
-    <div class="kpi"><div class="val">${bloquees}</div><div class="lbl">Bloquées</div></div>
-    <div class="kpi"><div class="val">${tauxAvancement}%</div><div class="lbl">Avancement</div></div>
+  document.getElementById('bars-responsable').innerHTML = `
+    <div class="bars-container">
+      <div class="bars-yaxis">${yaxisHtml}</div>
+      ${barsHtml}
+    </div>
   `;
 }
 
+function renderDonut(svgId, legendId, data, total, unit) {
+  const r = 15.9155;
+  const cx = 21, cy = 21;
+  let cumul = 0;
+  const entries = Object.entries(data).filter(([k,v]) => v.count > 0);
+
+  let circles = `<circle class="donut-bg" cx="${cx}" cy="${cy}" r="${r}" fill="transparent" stroke-width="3.5"/>`;
+  if (total > 0 && entries.length > 0) {
+    entries.forEach(([key, v]) => {
+      const pct = (v.count / total) * 100;
+      circles += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="transparent" stroke="${v.color}" stroke-width="3.5" stroke-dasharray="${pct.toFixed(2)} ${(100-pct).toFixed(2)}" stroke-dashoffset="${(-cumul).toFixed(2)}" stroke-linecap="butt"/>`;
+      cumul += pct;
+    });
+  }
+
+  document.getElementById(svgId).innerHTML = `
+    <svg viewBox="0 0 42 42">${circles}</svg>
+    <div class="donut-center">
+      <div class="big">${total}</div>
+      <div class="small">${unit}</div>
+    </div>
+  `;
+
+  const legend = Object.entries(data).map(([k, v]) => {
+    const pct = total > 0 ? Math.round((v.count / total) * 100) : 0;
+    return `
+      <div class="legend-item">
+        <span class="swatch" style="background:${v.color}"></span>
+        <span class="label">${escapeHtml(v.label)}</span>
+        <span class="value">${v.count}<span class="pct">${pct}%</span></span>
+      </div>
+    `;
+  }).join('');
+  document.getElementById(legendId).innerHTML = legend;
+}
+
 function toggleDashboard() {
-  const d = document.getElementById('dashboard');
-  const b = document.getElementById('toggle-dash-btn');
-  d.classList.toggle('collapsed');
-  b.textContent = d.classList.contains('collapsed') ? 'Déplier ▼' : 'Replier ▲';
+  // Préservé pour compat, sans effet visible (plus de bouton replier)
+}
+
+function fermerInfoBanner() {
+  document.getElementById('info-banner').style.display = 'none';
+  localStorage.setItem('lenaxis_info_dismissed', '1');
+}
+
+// =====================================================================
+// AVANCEMENT GLOBAL DU PROJET
+// =====================================================================
+function getDateButoir() {
+  return localStorage.getItem(DATE_BUTOIR_KEY) || '';
+}
+function getDateDebut() {
+  let d = localStorage.getItem(DATE_DEBUT_KEY);
+  if (!d) {
+    d = new Date().toISOString().slice(0,10);
+    localStorage.setItem(DATE_DEBUT_KEY, d);
+  }
+  return d;
+}
+function setDateButoir(val) {
+  if (!val) return;
+  localStorage.setItem(DATE_BUTOIR_KEY, val);
+  toast("Date butoir mise à jour.", 'success');
+  ouvrirAvancement();
+  refreshHeaderAvancement();
+}
+
+function calculerAvancement() {
+  // Avancement projet = tâches terminées / total
+  const total = taches.length;
+  const terminees = taches.filter(t => t.statut === 'Termine').length;
+  const pctProjet = total > 0 ? Math.round((terminees / total) * 100) : 0;
+
+  // Avancement temporel si date butoir
+  const butoir = getDateButoir();
+  const debut = getDateDebut();
+  let pctTemps = null, joursRestants = null, joursTotal = null;
+  if (butoir) {
+    const tButoir = new Date(butoir).getTime();
+    const tDebut = new Date(debut).getTime();
+    const tNow = Date.now();
+    joursTotal = Math.max(1, Math.round((tButoir - tDebut) / 86400000));
+    joursRestants = Math.round((tButoir - tNow) / 86400000);
+    const ecoule = Math.max(0, tNow - tDebut);
+    const total = Math.max(1, tButoir - tDebut);
+    pctTemps = Math.min(100, Math.round((ecoule / total) * 100));
+  }
+
+  // Statut
+  let statut = 'ok', statutLabel = '';
+  if (butoir) {
+    if (joursRestants < 0 && pctProjet < 100) {
+      statut = 'alerte';
+      statutLabel = `🔴 EN RETARD — date butoir dépassée de ${-joursRestants} jours`;
+    } else if (pctTemps - pctProjet > 15) {
+      statut = 'alerte';
+      statutLabel = `🔴 EN RETARD — avancement projet (${pctProjet}%) inférieur au temps écoulé (${pctTemps}%)`;
+    } else if (pctTemps - pctProjet > 5) {
+      statut = 'proche';
+      statutLabel = `🟡 À SURVEILLER — léger décalage avancement vs temps écoulé`;
+    } else if (joursRestants >= 0 && joursRestants <= 7 && pctProjet < 100) {
+      statut = 'proche';
+      statutLabel = `🟡 ÉCHÉANCE PROCHE — ${joursRestants} jours restants`;
+    } else {
+      statut = 'ok';
+      statutLabel = pctProjet === 100 ? `✅ PROJET TERMINÉ` : `✅ DANS LES TEMPS`;
+    }
+  } else {
+    statut = 'ok';
+    statutLabel = `Aucune date butoir définie`;
+  }
+
+  return { total, terminees, pctProjet, pctTemps, joursRestants, joursTotal, statut, statutLabel, butoir };
+}
+
+function refreshHeaderAvancement() {
+  // Met à jour le sous-titre header avec la date butoir formatée
+  const butoir = getDateButoir();
+  const el = document.getElementById('header-date-butoir');
+  if (el) {
+    if (butoir) {
+      const d = new Date(butoir);
+      const txt = d.toLocaleDateString('fr-FR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+      el.textContent = txt;
+    } else {
+      el.textContent = 'non définie';
+    }
+  }
+}
+
+function ouvrirAvancement() {
+  const a = calculerAvancement();
+
+  // Statut bandeau
+  const sp = document.getElementById('statut-projet');
+  sp.className = 'statut-projet ' + a.statut;
+  sp.textContent = a.statutLabel;
+
+  // Jauge SVG géante
+  const r = 80; // rayon
+  const c = 2 * Math.PI * r; // circonférence
+  const offset = c - (a.pctProjet / 100) * c;
+  let strokeColor = '#16A34A';
+  if (a.statut === 'alerte') strokeColor = '#DC2626';
+  else if (a.statut === 'proche') strokeColor = '#D97706';
+  else if (a.pctProjet < 50) strokeColor = '#00B9D6';
+
+  document.getElementById('gauge-svg').innerHTML = `
+    <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${strokeColor}" />
+          <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0.7" />
+        </linearGradient>
+      </defs>
+      <circle class="g-bg" cx="100" cy="100" r="${r}" fill="transparent" stroke-width="14"/>
+      <circle class="g-fg" cx="100" cy="100" r="${r}" fill="transparent" stroke="url(#gaugeGradient)" stroke-width="14" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="round"/>
+    </svg>
+    <div class="gauge-center">
+      <div class="gauge-pct">${a.pctProjet}%</div>
+      <div class="gauge-lbl">Avancement</div>
+    </div>
+  `;
+
+  document.getElementById('gauge-detail').innerHTML = `<b>${a.terminees}</b> tâches terminées sur <b>${a.total}</b>`;
+
+  // Bloc échéance
+  const echeBox = document.getElementById('echeance-box');
+  if (a.butoir) {
+    echeBox.style.display = 'grid';
+    echeBox.className = 'echeance-box ' + a.statut;
+    document.getElementById('jours-restants').textContent = a.joursRestants >= 0 ? a.joursRestants : `-${Math.abs(a.joursRestants)}`;
+    document.getElementById('date-cible').textContent = new Date(a.butoir).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'2-digit' });
+  } else {
+    echeBox.style.display = 'none';
+  }
+
+  // Avancement par personne
+  const ordre = ['David', 'Romain', 'Guillaume', 'Charles', 'Lucien', 'Eric', 'Tous'];
+  const parPersonne = {};
+  ordre.forEach(p => { parPersonne[p] = { total: 0, terminees: 0 }; });
+  taches.forEach(t => {
+    if (!parPersonne[t.personne]) parPersonne[t.personne] = { total: 0, terminees: 0 };
+    parPersonne[t.personne].total++;
+    if (t.statut === 'Termine') parPersonne[t.personne].terminees++;
+  });
+
+  const html = ordre.filter(p => parPersonne[p].total > 0).map(p => {
+    const d = parPersonne[p];
+    const pct = d.total > 0 ? Math.round((d.terminees / d.total) * 100) : 0;
+    return `
+      <div class="progress-personne">
+        <div class="pp-nom">${escapeHtml(p)}</div>
+        <div class="pp-bar"><div class="pp-fill" style="width:${pct}%"></div></div>
+        <div class="pp-text">${d.terminees}/${d.total}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('progress-personnes').innerHTML = html || '<p style="color:var(--grey-500); font-size:12px">Aucune donnée.</p>';
+
+  // Config date butoir
+  document.getElementById('config-date-butoir').value = a.butoir || '';
+
+  document.getElementById('modal-avancement-overlay').classList.add('show');
 }
 
 function renderTache(t) {
@@ -1270,6 +2109,20 @@ function renderTache(t) {
         ${dateAff ? `<span class="echeance ${echeanceClass}">📅 ${dateAff} ${echeanceLabel}</span>` : ''}
       </div>
       <div class="col-actions-droite">
+        <button class="mobile-action relance" title="Relancer par mail" onclick="ouvrirRelance(${t.id})" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span>Relancer</span>
+        </button>
+        <button class="mobile-action cr" title="Compte-rendu / pièce" onclick="ouvrirCR(${t.id})" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+          </svg>
+          <span>Doc</span>
+          ${crCount > 0 ? `<span class="badge-count-m">${crCount}</span>` : ''}
+        </button>
         <button class="btn-action-droite" title="Éditer" onclick="ouvrirEdition(${t.id})">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
@@ -1619,6 +2472,38 @@ function importerDonnees(event) {
   reader.readAsText(file);
 }
 
+function copierURL() {
+  const url = window.location.href.split('#')[0].split('?')[0];
+  navigator.clipboard.writeText(url).then(() => {
+    toast("URL copiée. Tu peux la partager à Romain, Guillaume et Maître Caprioli.", 'success');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast("URL copiée.", 'success'); }
+    catch(e) { toast("Copie impossible. URL : " + url, 'error'); }
+    document.body.removeChild(ta);
+  });
+}
+
+function resetDonnees() {
+  const confirmation = prompt('⚠️ ATTENTION : cette action va supprimer TOUTES tes tâches et tes comptes-rendus déposés, et remettre l\'application à zéro.\n\nTape "RESET" en majuscules pour confirmer :');
+  if (confirmation !== 'RESET') {
+    toast("Reset annulé.", 'info');
+    return;
+  }
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(CONTACTS_KEY);
+  localStorage.removeItem(DATE_BUTOIR_KEY);
+  localStorage.removeItem(DATE_DEBUT_KEY);
+  localStorage.removeItem('lenaxis_info_dismissed');
+  localStorage.removeItem('lenaxis_help_dismissed');
+  toast("Reset effectué. Rechargement…", 'success');
+  setTimeout(() => location.reload(), 800);
+}
+
 // =====================================================================
 // MODAUX UTILS
 // =====================================================================
@@ -1672,7 +2557,15 @@ uz.addEventListener('drop', e => {
 // INIT
 // =====================================================================
 chargerDonnees();
+// Initialiser la date butoir au 12/06/2026 si non définie
+if (!localStorage.getItem(DATE_BUTOIR_KEY)) {
+  localStorage.setItem(DATE_BUTOIR_KEY, '2026-06-12');
+}
 afficherTaches();
+if (localStorage.getItem('lenaxis_info_dismissed') === '1') {
+  const ib = document.getElementById('info-banner');
+  if (ib) ib.style.display = 'none';
+}
 </script>
 </body>
 </html>
